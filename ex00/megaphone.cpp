@@ -1,7 +1,9 @@
 #include <cctype>
 #include <iostream>
+#include <string>
 
-#define STR_WHEN_ARGS_EMPTY "* LOUD AND UNBEARABLE FEEDBACK NOISE *"
+const std::string MSG_WHEN_ARGS_EMPTY =
+    "* LOUD AND UNBEARABLE FEEDBACK NOISE *";
 
 void print_toupper_str(const char *str) {
     while (*str != '\0') {
@@ -12,7 +14,7 @@ void print_toupper_str(const char *str) {
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        std::cout << STR_WHEN_ARGS_EMPTY << std::endl;
+        std::cout << MSG_WHEN_ARGS_EMPTY << std::endl;
         return (0);
     }
 
