@@ -3,6 +3,8 @@
 
 #include <string>
 
+const int FIELD_COUNT = 5;
+
 enum ContactField {
     FIRST_NAME,
     LAST_NAME,
@@ -16,25 +18,10 @@ class Contact {
     Contact();
 
     const std::string *getField(ContactField field) const;
-    const std::string &getFirstName() const;
-    const std::string &getLastName() const;
-    const std::string &getNickName() const;
-    const std::string &getPhoneNumber() const;
-    const std::string &getDarkestSecret() const;
-
     bool setField(ContactField field, const std::string &value);
-    bool setFirstName(const std::string &firstName);
-    bool setLastName(const std::string &lastName);
-    bool setNickName(const std::string &nickName);
-    bool setPhoneNumber(const std::string &phoneNumber);
-    bool setDarkestSecret(const std::string &darkestSecret);
 
    private:
-    std::string _firstName;
-    std::string _lastName;
-    std::string _nickname;
-    std::string _phoneNumber;
-    std::string _darkestSecret;
+    std::string _field[FIELD_COUNT];
 };
 
 #endif /* CONTACT_HPP */
