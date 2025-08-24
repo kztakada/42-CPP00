@@ -2,20 +2,6 @@
 
 PhoneBook::PhoneBook() : _contactSize(0) {}
 
-// PhoneBook::~PhoneBook() {}
-
-// PhoneBook::PhoneBook(PhoneBook const &other) { *this = other; }
-
-// PhoneBook &PhoneBook::operator=(PhoneBook const &other) {
-//     if (this != &other) {
-//         for (int i = 0; i < MAX_CONTACTS; ++i) {
-//             _contacts[i] = other._contacts[i];
-//         }
-//         _contactCount = other._contactCount;
-//     }
-//     return *this;
-// }
-
 static void shiftArray(Contact *arr, int size) {
     for (int i = 1; i < size; ++i) {
         arr[i - 1] = arr[i];

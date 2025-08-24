@@ -1,36 +1,93 @@
 #include "Contact.hpp"
 
 Contact::Contact()
-    : _first_name(""),
-      _last_name(""),
+    : _firstName(""),
+      _lastName(""),
       _nickname(""),
-      _phone_number(""),
-      _darkest_secret("") {}
+      _phoneNumber(""),
+      _darkestSecret("") {}
 
-Contact::Contact(std::string first_name, std::string last_name,
-    std::string nickname, std::string phone_number, std::string darkest_secret)
-    : _first_name(first_name),
-      _last_name(last_name),
-      _nickname(nickname),
-      _phone_number(phone_number),
-      _darkest_secret(darkest_secret) {}
+const std::string *Contact::getField(ContactField field) const {
+    switch (field) {
+        case FIRST_NAME:
+            return &_firstName;
+        case LAST_NAME:
+            return &_lastName;
+        case NICKNAME:
+            return &_nickname;
+        case PHONE_NUMBER:
+            return &_phoneNumber;
+        case DARKEST_SECRET:
+            return &_darkestSecret;
+        default:
+            return NULL;
+    }
+}
 
-const std::string &Contact::firstName() const { return _first_name; }
+const std::string &Contact::getFirstName() const { return _firstName; }
 
-const std::string &Contact::lastName() const { return _last_name; }
+const std::string &Contact::getLastName() const { return _lastName; }
 
-const std::string &Contact::nickname() const { return _nickname; }
+const std::string &Contact::getNickName() const { return _nickname; }
 
-const std::string &Contact::phoneNumber() const { return _phone_number; }
+const std::string &Contact::getPhoneNumber() const { return _phoneNumber; }
 
-const std::string &Contact::darkestSecret() const { return _darkest_secret; }
+const std::string &Contact::getDarkestSecret() const { return _darkestSecret; }
 
-// Contact::~Contact() {}
+bool Contact::setField(ContactField field, const std::string &value) {
+    switch (field) {
+        case FIRST_NAME:
+            return setFirstName(value);
+            break;
+        case LAST_NAME:
+            return setLastName(value);
+            break;
+        case NICKNAME:
+            return setNickName(value);
+            break;
+        case PHONE_NUMBER:
+            return setPhoneNumber(value);
+            break;
+        case DARKEST_SECRET:
+            return setDarkestSecret(value);
+            break;
+        default:
+            return false;
+    }
+    return true;
+}
 
-// Contact::Contact(Contact const &other) { *this = other; }
+bool Contact::setFirstName(const std::string &firstName) {
+    _firstName = firstName;
+    return true;
+}
 
-// Contact &Contact::operator=(Contact const &other) {
-//     if (this != &other) {
-//     }
-//     return *this;
-// }
+bool Contact::setLastName(const std::string &lastName) {
+    _lastName = lastName;
+    return true;
+}
+
+bool Contact::setNickName(const std::string &nickName) {
+    _nickname = nickName;
+    return true;
+}
+
+bool Contact::setPhoneNumber(const std::string &phoneNumber) {
+    // if (phoneNumber.length() < 10 || phoneNumber.length() > 15)
+    //     return false;
+    // for (size_t i = 0; i < phoneNumber.length(); ++i) {
+    //     if (i == 0 && phoneNumber[i] == '+')
+    //         continue;
+    //     char c = phoneNumber[i];
+    //     if (!std::isdigit(c) && c != '-') {
+    //         return false;
+    //     }
+    // }
+    _phoneNumber = phoneNumber;
+    return true;
+}
+
+bool Contact::setDarkestSecret(const std::string &darkestSecret) {
+    _darkestSecret = darkestSecret;
+    return true;
+}

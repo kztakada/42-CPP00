@@ -15,15 +15,15 @@ class Display {
     static void showExplanationHeader();
     static void showCursor();
     static void showContactList(const PhoneBook &phoneBook);
+    static void showListSelectMessage();
     static void showContact(const Contact &contact);
 
     static void showNoCommandMessage();
+    static void showInvalidIndexMessage();
+    static void showRuntimeError();
 
    private:
     Display();
-    // ~Display();
-    // Display(Display const &other);
-    // Display &operator=(Display const &other);
 };
 
 #endif /* DISPLAY_HPP */

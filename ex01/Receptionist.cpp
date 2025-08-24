@@ -1,18 +1,9 @@
 #include "Receptionist.hpp"
 
-Receptionist::Receptionist(PhoneBook &phoneBook) : _phoneBook(phoneBook) {}
-
-// Receptionist::~Receptionist() {}
-
-// Receptionist::Receptionist(Receptionist const &other)
-//     : _phoneBook(other._phoneBook) {}
-
-// Receptionist &Receptionist::operator=(Receptionist const &other) {
-//     if (this != &other) {
-//         _phoneBook = other._phoneBook;
-//     }
-//     return *this;
-// }
+Receptionist::Receptionist(PhoneBook *phoneBook)
+    : _phoneBook(phoneBook), _isStrictMode(false) {}
+Receptionist::Receptionist(PhoneBook *phoneBook, bool isStrictMode)
+    : _phoneBook(phoneBook), _isStrictMode(isStrictMode) {}
 
 void Receptionist::serve() {
     Display::showExplanationHeader();
@@ -36,30 +27,57 @@ void Receptionist::serve() {
 }
 
 void Receptionist::listenToUserInput(std::string &input) {
-    if (std::getline(std::cin, input) == false)
-        throw;
-    if (std::cin.fail() || std::cin.eof())
-        throw;
+    if (std::getline(std::cin, input) == false) {
+        if (std::cin.eof()) {
+            throw std::ios_base::failure("EOF detected");
+        } else {
+            throw std::runtime_error("Failed to read input");
+        }
+    }
 }
 
 void Receptionist::handleAddContact() {
     std::string answer = "";
-    std::string c[5];
+    Contact contact;
+
+    if (_isStrictMode)  // TODO: FIX it
+        return;
 
     for (int i = 0; i < 5; ++i) {
-        while (answer.empty()) {
-            Display::echo(CONTACT_PROMPTS[i]);
-            listenToUserInput(answer);
+        bool couldSetField = false;
+        while (!couldSetField) {
+            while (answer.empty()) {
+                Display::echo(CONTACT_PROMPTS[i]);
+                listenToUserInput(answer);
+            }
+            couldSetField =
+                contact.setField(static_cast<ContactField>(i), answer);
+            answer.clear();
         }
-        c[i] = answer;
-        answer.clear();
     }
 
-    _phoneBook.addContact(Contact(c[0], c[1], c[2], c[3], c[4]));
+    _phoneBook->addContact(contact);
 }
 
 void Receptionist::handleSearchContact() {
-    Display::showContactList(_phoneBook);
+    std::string select_index = "";
+    Display::showContactList(*_phoneBook);
+    Display::showListSelectMessage();
+    listenToUserInput(select_index);
+
+    std::stringstream ss(select_index);
+    int index;
+    if (!(ss >> index)) {
+        Display::showInvalidIndexMessage();
+        return;
+    }
+
+    const Contact *contact = _phoneBook->getContact(index);
+    if (contact != NULL) {
+        Display::showContact(*contact);
+    } else {
+        Display::showInvalidIndexMessage();
+    }
 }
 
 void Receptionist::handleNoCommand() { Display::showNoCommandMessage(); }

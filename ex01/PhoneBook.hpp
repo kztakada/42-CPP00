@@ -8,9 +8,6 @@ const int MAX_CONTACTS = 8;
 class PhoneBook {
    public:
     PhoneBook();
-    //  ~PhoneBook();
-    //  PhoneBook(PhoneBook const &other);
-    //  PhoneBook &operator=(PhoneBook const &other);
 
     void addContact(Contact const &contact);
     const Contact *getContact(int index) const;

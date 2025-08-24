@@ -10,29 +10,50 @@ void Display::showExplanationHeader() {
 
 void Display::showCursor() {
     std::cout << "Enter the command ADD, SEARCH, or EXIT.\n";
-    std::cout << "> ";
+    std::cout << "> " << std::flush;
 }
 
 void Display::showContactList(const PhoneBook& phoneBook) {
     for (int i = 0; i < MAX_CONTACTS; ++i) {
         if (phoneBook.getContact(i) == NULL)
             break;
-
+        std::cout << i << ": ";
         const Contact* contact = phoneBook.getContact(i);
-        std::cout << i << ": " << contact->firstName() << " "
-                  << contact->lastName() << " " << contact->nickname() << "\n";
+        for (int j = 0; j < 3; ++j) {
+            const std::string* field =
+                contact->getField(static_cast<ContactField>(j));
+            if (field != NULL) {
+                std::cout << *field << " ";
+            }
+        }
+        std::cout << "\n";
     }
     std::cout << std::endl;
 }
 
 void Display::showContact(const Contact& contact) {
-    std::cout << "First Name: " << contact.firstName() << "\n";
-    std::cout << "Last Name: " << contact.lastName() << "\n";
-    std::cout << "Nickname: " << contact.nickname() << "\n";
-    std::cout << "Phone Number: " << contact.phoneNumber() << "\n";
-    std::cout << "Darkest Secret: " << contact.darkestSecret() << "\n";
+    for (int i = 0; i < MAX_CONTACTS; ++i) {
+        const std::string* field =
+            contact.getField(static_cast<ContactField>(i));
+        if (field != NULL) {
+            std::cout << CONTACT_PROMPTS[i] << *field << "\n";
+        }
+    }
+    std::cout << std::endl;
+}
+
+void Display::showListSelectMessage() {
+    std::cout << "Enter the index of the contact to view details:\n> ";
 }
 
 void Display::showNoCommandMessage() {
     std::cout << "No command entered. Please try again.\n\n";
+}
+
+void Display::showInvalidIndexMessage() {
+    std::cout << "Sorry, Invalid index.\n\n";
+}
+
+void Display::showRuntimeError() {
+    std::cerr << "An error occurred while running the PhoneBook application.\n";
 }

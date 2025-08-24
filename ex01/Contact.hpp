@@ -3,27 +3,38 @@
 
 #include <string>
 
+enum ContactField {
+    FIRST_NAME,
+    LAST_NAME,
+    NICKNAME,
+    PHONE_NUMBER,
+    DARKEST_SECRET
+};
+
 class Contact {
    public:
     Contact();
-    Contact(std::string first_name, std::string last_name, std::string nickname,
-        std::string phone_number, std::string darkest_secret);
-    //  ~Contact();
-    //  Contact(Contact const &other);
-    //  Contact &operator=(Contact const &other);
 
-    const std::string &firstName() const;
-    const std::string &lastName() const;
-    const std::string &nickname() const;
-    const std::string &phoneNumber() const;
-    const std::string &darkestSecret() const;
+    const std::string *getField(ContactField field) const;
+    const std::string &getFirstName() const;
+    const std::string &getLastName() const;
+    const std::string &getNickName() const;
+    const std::string &getPhoneNumber() const;
+    const std::string &getDarkestSecret() const;
+
+    bool setField(ContactField field, const std::string &value);
+    bool setFirstName(const std::string &firstName);
+    bool setLastName(const std::string &lastName);
+    bool setNickName(const std::string &nickName);
+    bool setPhoneNumber(const std::string &phoneNumber);
+    bool setDarkestSecret(const std::string &darkestSecret);
 
    private:
-    std::string _first_name;
-    std::string _last_name;
+    std::string _firstName;
+    std::string _lastName;
     std::string _nickname;
-    std::string _phone_number;
-    std::string _darkest_secret;
+    std::string _phoneNumber;
+    std::string _darkestSecret;
 };
 
 #endif /* CONTACT_HPP */
