@@ -3,24 +3,29 @@
 
 #include <iostream>
 
-#include "Contact.hpp"
-#include "PhoneBook.hpp"
-
 const char *const CONTACT_PROMPTS[] = {"First Name: ", "Last Name: ",
     "Nickname: ", "Phone Number: ", "Darkest Secret: "};
 
+const std::string ExplanationHeader = "Welcome to the PhoneBook application.";
+const std::string CommandMessage = "Enter the command ADD, SEARCH, or EXIT.\n";
+const std::string Cursor = "> ";
+const std::string CommandCursor = CommandMessage + Cursor;
+const std::string ListSelectMessage =
+    "Enter the index of the contact to view details:\n";
+const std::string ListSelectCursor = ListSelectMessage + Cursor;
+const std::string NoCommandMessage = "No command entered. Please try again.\n";
+const std::string InvalidIndexMessage = "Invalid index. Please try again.\n";
+const std::string NoContactsMessage = "No contacts available.\n";
+
+// error messages
+const std::string RuntimeErrorMessage =
+    "An error occurred while running the PhoneBook application.\n";
+
 class Display {
    public:
-    static void echo(const std::string &message);
-    static void showExplanationHeader();
-    static void showCursor();
-    static void showContactList(const PhoneBook &phoneBook);
-    static void showListSelectMessage();
-    static void showContact(const Contact &contact);
-
-    static void showNoCommandMessage();
-    static void showInvalidIndexMessage();
-    static void showRuntimeError();
+    static void show(const std::string &message);
+    static void prompt(const std::string &message);
+    static void error(const std::string &message);
 
    private:
     Display();

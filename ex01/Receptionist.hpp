@@ -1,7 +1,6 @@
 #ifndef RECEPTIONIST_HPP
 #define RECEPTIONIST_HPP
 
-// #include <cstdlib>
 #include <iostream>
 #include <sstream>
 
@@ -18,10 +17,12 @@ class Receptionist {
    private:
     PhoneBook *_phoneBook;
     bool _isStrictMode;
-    void listenToUserInput(std::string &input);
-    void handleAddContact();
-    void handleSearchContact();
-    void handleNoCommand();
+    void _listenToUserInput(std::string &input);
+    void _handleAddContact();
+    void _handleSearchContact();
+    void _handleNoCommand();
+    std::string _makeContactList();
+    std::string _makeContactDetails(const Contact *contact);
 };
 
 #endif /* RECEPTIONIST_HPP */

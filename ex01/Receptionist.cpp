@@ -6,49 +6,49 @@ Receptionist::Receptionist(PhoneBook *phoneBook, bool isStrictMode)
     : _phoneBook(phoneBook), _isStrictMode(isStrictMode) {}
 
 void Receptionist::serve() {
-    Display::showExplanationHeader();
+    Display::show(ExplanationHeader);
     while (true) {
         std::string command;
-        Display::showCursor();
-        listenToUserInput(command);
+        Display::prompt(CommandCursor);
+        _listenToUserInput(command);
 
         if (command.empty())
             continue;
 
         if (command == "ADD")
-            handleAddContact();
+            _handleAddContact();
         else if (command == "SEARCH")
-            handleSearchContact();
+            _handleSearchContact();
         else if (command == "EXIT")
             return;
         else
-            handleNoCommand();
+            _handleNoCommand();
     }
 }
 
-void Receptionist::listenToUserInput(std::string &input) {
+void Receptionist::_listenToUserInput(std::string &input) {
     if (std::getline(std::cin, input) == false) {
         if (std::cin.eof()) {
             throw std::ios_base::failure("EOF detected");
         } else {
-            throw std::runtime_error("Failed to read input");
+            throw std::string("Failed to read input");
         }
     }
 }
 
-void Receptionist::handleAddContact() {
+void Receptionist::_handleAddContact() {
     std::string answer = "";
     Contact contact;
 
     if (_isStrictMode)  // TODO: FIX it
         return;
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < FIELD_COUNT; ++i) {
         bool couldSetField = false;
         while (!couldSetField) {
             while (answer.empty()) {
-                Display::echo(CONTACT_PROMPTS[i]);
-                listenToUserInput(answer);
+                Display::prompt(CONTACT_PROMPTS[i]);
+                _listenToUserInput(answer);
             }
             couldSetField =
                 contact.setField(static_cast<ContactField>(i), answer);
@@ -59,25 +59,68 @@ void Receptionist::handleAddContact() {
     _phoneBook->addContact(contact);
 }
 
-void Receptionist::handleSearchContact() {
+void Receptionist::_handleSearchContact() {
+    if (_phoneBook->getContact(0) == NULL) {
+        Display::show(NoContactsMessage);
+        return;
+    }
+    std::string contactList = _makeContactList();
+    Display::show(contactList);
+
+    Display::prompt(ListSelectCursor);
     std::string select_index = "";
-    Display::showContactList(*_phoneBook);
-    Display::showListSelectMessage();
-    listenToUserInput(select_index);
+    _listenToUserInput(select_index);
 
     std::stringstream ss(select_index);
     int index;
     if (!(ss >> index)) {
-        Display::showInvalidIndexMessage();
+        Display::show(InvalidIndexMessage);
         return;
     }
 
     const Contact *contact = _phoneBook->getContact(index);
     if (contact != NULL) {
-        Display::showContact(*contact);
+        std::string contactDetails = _makeContactDetails(contact);
+        Display::show(contactDetails);
     } else {
-        Display::showInvalidIndexMessage();
+        Display::show(InvalidIndexMessage);
     }
 }
 
-void Receptionist::handleNoCommand() { Display::showNoCommandMessage(); }
+void Receptionist::_handleNoCommand() { Display::show(NoCommandMessage); }
+
+static std::string makeContactPreview(
+    const Contact *contact, int fieldViewCount) {
+    std::stringstream ssContact;
+    for (int i = 0; i < fieldViewCount; ++i) {
+        const std::string *field =
+            contact->getField(static_cast<ContactField>(i));
+        if (field != NULL) {
+            ssContact << *field << " ";
+        }
+    }
+    return ssContact.str();
+}
+
+std::string Receptionist::_makeContactList() {
+    std::stringstream ssList;
+    for (int i = 0; i < MAX_CONTACTS; ++i) {
+        if (_phoneBook->getContact(i) == NULL)
+            break;
+        const Contact *contact = _phoneBook->getContact(i);
+        ssList << i << ": " << makeContactPreview(contact, 3) << "\n";
+    }
+    return ssList.str();
+}
+
+std::string Receptionist::_makeContactDetails(const Contact *contact) {
+    std::stringstream ss;
+    for (int i = 0; i < FIELD_COUNT; ++i) {
+        const std::string *field =
+            contact->getField(static_cast<ContactField>(i));
+        if (field != NULL) {
+            ss << CONTACT_PROMPTS[i] << *field << "\n";
+        }
+    }
+    return ss.str();
+}

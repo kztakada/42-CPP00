@@ -15,7 +15,7 @@ const std::string *Contact::getField(ContactField field) const {
 
 bool Contact::setField(ContactField field, const std::string &value) {
     if (!isValidField(field)) {
-        return false;
+        throw std::string("SetField: Invalid field");
     }
     _field[field] = value;
     return true;

@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <iostream>
+#include <string>
 
 #include "Display.hpp"
 #include "PhoneBook.hpp"
@@ -16,10 +17,12 @@ int main(int argc, char* argv[]) {
     try {
         receptionist.serve();
     } catch (const std::ios_base::failure& e) {
-        return (EXIT_SUCCESS);
+        exit(EXIT_SUCCESS);
+    } catch (const std::string& e) {
+        Display::error(e);
+        exit(EXIT_FAILURE);
     } catch (...) {
-        Display::showRuntimeError();
-        return (EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
     return (EXIT_SUCCESS);
 }
