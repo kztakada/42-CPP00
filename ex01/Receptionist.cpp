@@ -2,34 +2,31 @@
 
 // class use file static funcs prototypes
 static void listenToUserInput(std::string &input);
-static bool isValidContactField(const std::string &field);
-static bool isPhoneNumberValid(const std::string &field);
-static bool hasNoSpaces(const std::string &field);
-static bool isStrictValidContactField(
-    const std::string &field, ContactValidationType type);
+static const char *validateContactField(
+    const std::string &field, bool isStrictMode, ContactValidationType type);
+static const char *validateBasicField(const std::string &field);
+static const char *validatePhoneNumber(const std::string &field);
+static const char *validateNameField(const std::string &field);
 static std::string fitColWidth(const std::string &str);
 static std::string getTitleLine(int fieldViewCount);
 static std::string makeContactPreview(
-    const Contact<CONTACT_FORM_SIZE> *contact, int fieldViewCount);
-static std::string makeContactDetails(
-    const Contact<CONTACT_FORM_SIZE> *contact);
+    const ContactType *contact, int fieldViewCount);
+static std::string makeContactDetails(const ContactType *contact);
 
 //-----------------------------------------------------------------
 // class public methods
 
-Receptionist::Receptionist(PhoneBook *phoneBook)
-    : _phoneBook(phoneBook), _isEchoMode(false), _isStrictMode(false) {}
 Receptionist::Receptionist(
-    PhoneBook *phoneBook, bool isEchoMode, bool isStrictMode)
+    PhoneBook *phoneBook, bool isEchoMode = false, bool isStrictMode = false)
     : _phoneBook(phoneBook),
       _isEchoMode(isEchoMode),
       _isStrictMode(isStrictMode) {}
 
 void Receptionist::serve() {
-    Display::show(ExplanationHeader);
+    Display::show(Display::EXPLANATION_HEADER);
     while (true) {
         std::string command;
-        Display::prompt(CommandCursor);
+        Display::prompt(Display::getCommandCursor());
         listenToUserInput(command);
         if (_isEchoMode)
             Display::show(command);
@@ -52,27 +49,26 @@ void Receptionist::serve() {
 
 void Receptionist::_handleAddContact() {
     std::string answer = "";
-    Contact<CONTACT_FORM_SIZE> contact;
+    ContactType contact;
 
     for (int i = 0; i < CONTACT_FORM_SIZE; ++i) {
         bool couldSetField = false;
         while (!couldSetField) {
-            std::string prompt = CONTACT_FORM[i];
+            std::string prompt = CONTACT_FIELD_INFO[i].name;
             prompt += ": ";
             Display::prompt(prompt);
             listenToUserInput(answer);
             if (_isEchoMode)
                 Display::show(answer);
 
-            bool isValid = false;
-            if (_isStrictMode)
-                isValid = isStrictValidContactField(answer,
-                    static_cast<ContactValidationType>(CONTACT_FORM_RULES[i]));
-            else
-                isValid = isValidContactField(answer);
+            const char *errorMessage = validateContactField(
+                answer, _isStrictMode, CONTACT_FIELD_INFO[i].validationType);
 
-            if (isValid)
+            if (errorMessage == NULL) {
                 couldSetField = contact.setField(i, answer);
+            } else {
+                Display::show(errorMessage);
+            }
             answer.clear();
         }
     }
@@ -82,13 +78,13 @@ void Receptionist::_handleAddContact() {
 
 void Receptionist::_handleSearchContact() {
     if (_phoneBook->getContact(0) == NULL) {
-        Display::show(NoContactsMessage);
+        Display::show(Display::NO_CONTACTS_MESSAGE);
         return;
     }
     std::string contactList = _makeContactList();
     Display::show(contactList);
 
-    Display::prompt(ListSelectCursor);
+    Display::prompt(Display::getListSelectCursor());
     std::string select_index = "";
     listenToUserInput(select_index);
     if (_isEchoMode)
@@ -97,20 +93,22 @@ void Receptionist::_handleSearchContact() {
     std::stringstream ss(select_index);
     int index;
     if (!(ss >> index)) {
-        Display::show(InvalidIndexMessage);
+        Display::show(Display::INVALID_INDEX_MESSAGE);
         return;
     }
 
-    const Contact<CONTACT_FORM_SIZE> *contact = _phoneBook->getContact(index);
+    const ContactType *contact = _phoneBook->getContact(index);
     if (contact != NULL) {
         std::string contactDetails = makeContactDetails(contact);
         Display::show(contactDetails);
     } else {
-        Display::show(InvalidIndexMessage);
+        Display::show(Display::INVALID_INDEX_MESSAGE);
     }
 }
 
-void Receptionist::_handleNoCommand() { Display::show(NoCommandMessage); }
+void Receptionist::_handleNoCommand() {
+    Display::show(Display::NO_COMMAND_MESSAGE);
+}
 
 std::string Receptionist::_makeContactList() {
     std::stringstream ssList;
@@ -118,7 +116,7 @@ std::string Receptionist::_makeContactList() {
     for (int i = 0; i < MAX_CONTACTS; ++i) {
         if (_phoneBook->getContact(i) == NULL)
             break;
-        const Contact<CONTACT_FORM_SIZE> *contact = _phoneBook->getContact(i);
+        const ContactType *contact = _phoneBook->getContact(i);
         ssList << std::setw(COL_WIDTH) << i
                << makeContactPreview(contact, PREVIEW_SIZE) << "\n";
     }
@@ -138,57 +136,62 @@ static void listenToUserInput(std::string &input) {
     }
 }
 
-static bool isValidContactField(const std::string &field) {
-    if (field.size() > INT_MAX) {
-        Display::show("Input is too long");
-        return false;
+static const char *validateBasicField(const std::string &field) {
+    if (field.size() > static_cast<size_t>(INT_MAX)) {
+        return "Input is too long";
     }
     if (field.empty()) {
-        Display::show("Please enter something");
-        return false;
+        return "Please enter something";
     }
-    return true;
+    return NULL;
 }
 
-static bool isPhoneNumberValid(const std::string &field) {
+static const char *validateNameField(const std::string &field) {
+    if (field.find(' ') != std::string::npos) {
+        return "Field must not contain spaces";
+    }
+    return NULL;
+}
+
+static const char *validatePhoneNumber(const std::string &field) {
     std::string checked = field;
-    if (field[0] == '+')
+    if (!field.empty() && field[0] == '+') {
         checked = field.substr(1);
-    for (int i = 0; i < (int)checked.length(); ++i) {
+    }
+    for (size_t i = 0; i < checked.length(); ++i) {
         if (!isdigit(checked[i]) && checked[i] != '-') {
-            Display::show("Phone number can contain only digits, and hyphens");
-            return false;
+            return "Phone number can contain only digits, and hyphens";
         }
     }
-    return true;
+    return NULL;
 }
 
-static bool hasNoSpaces(const std::string &field) {
-    if (field.find(' ') != std::string::npos) {
-        Display::show("Field must not contain spaces");
-        return false;
+static const char *validateContactField(
+    const std::string &field, bool isStrictMode, ContactValidationType type) {
+    const char *basicError = validateBasicField(field);
+    if (basicError != NULL) {
+        return basicError;
     }
-    return true;
-}
 
-static bool isStrictValidContactField(
-    const std::string &field, ContactValidationType type) {
-    if (!isValidContactField(field))
-        return false;
+    if (!isStrictMode) {
+        return NULL;
+    }
+
     switch (type) {
-        case NAME:
-            return hasNoSpaces(field);
-        case PHONE_NUMBER:
-            return isPhoneNumberValid(field);
-        case NONE:
-            return true;
+        case VALIDATION_NAME:
+            return validateNameField(field);
+        case VALIDATION_PHONE_NUMBER:
+            return validatePhoneNumber(field);
+        case VALIDATION_NONE:
+            return NULL;
+        default:
+            return NULL;
     }
-    return false;
 }
 
 static std::string fitColWidth(const std::string &str) {
-    if ((int)str.length() > COL_WIDTH) {
-        return str.substr(0, COL_WIDTH - 1) + ".";
+    if (static_cast<int>(str.length()) > COL_WIDTH) {
+        return str.substr(0, static_cast<size_t>(COL_WIDTH - 1)) + ".";
     }
     return str;
 }
@@ -196,8 +199,8 @@ static std::string fitColWidth(const std::string &str) {
 static std::string getTitleLine(int fieldViewCount) {
     std::stringstream ssTitle;
     ssTitle << std::setw(COL_WIDTH) << "Index";
-    for (int i = 0; i < fieldViewCount; ++i) {
-        std::string title = CONTACT_FORM[i];
+    for (int i = 0; i < fieldViewCount && i < CONTACT_FORM_SIZE; ++i) {
+        std::string title = CONTACT_FIELD_INFO[i].name;
         ssTitle << "|" << std::setw(COL_WIDTH) << fitColWidth(title);
     }
     ssTitle << "\n";
@@ -205,7 +208,7 @@ static std::string getTitleLine(int fieldViewCount) {
 }
 
 static std::string makeContactPreview(
-    const Contact<CONTACT_FORM_SIZE> *contact, int fieldViewCount) {
+    const ContactType *contact, int fieldViewCount) {
     std::stringstream ssContact;
     for (int i = 0; i < fieldViewCount; ++i) {
         const std::string *field = contact->getField(i);
@@ -217,13 +220,12 @@ static std::string makeContactPreview(
     return ssContact.str();
 }
 
-static std::string makeContactDetails(
-    const Contact<CONTACT_FORM_SIZE> *contact) {
+static std::string makeContactDetails(const ContactType *contact) {
     std::stringstream ss;
     for (int i = 0; i < CONTACT_FORM_SIZE; ++i) {
         const std::string *field = contact->getField(i);
         if (field != NULL) {
-            std::string title = CONTACT_FORM[i];
+            std::string title = CONTACT_FIELD_INFO[i].name;
             title += ": ";
             ss << std::setw(TITLE_WIDTH) << title << *field << "\n";
         }

@@ -9,12 +9,11 @@
 #include "Contact.hpp"
 #include "Display.hpp"
 #include "PhoneBook.hpp"
-#include "Settings.hpp"
+#include "PhoneBookDomain.hpp"
 
 class Receptionist {
    public:
-    Receptionist(PhoneBook *phoneBook);
-    Receptionist(PhoneBook *phoneBook, bool isStrictMode, bool isEchoMode);
+    Receptionist(PhoneBook *phoneBook, bool isEchoMode, bool isStrictMode);
 
     void serve();
 

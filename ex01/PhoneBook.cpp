@@ -2,13 +2,13 @@
 
 PhoneBook::PhoneBook() : _contactSize(0) {}
 
-static void shiftArray(Contact<CONTACT_FORM_SIZE> *arr, int size) {
+static void shiftArray(ContactType *arr, int size) {
     for (int i = 1; i < size; ++i) {
         arr[i - 1] = arr[i];
     }
 }
 
-void PhoneBook::addContact(Contact<CONTACT_FORM_SIZE> const &contact) {
+void PhoneBook::addContact(ContactType const &contact) {
     if (_contactSize >= MAX_CONTACTS) {
         shiftArray(_contacts, MAX_CONTACTS);
         _contacts[MAX_CONTACTS - 1] = contact;
@@ -18,7 +18,7 @@ void PhoneBook::addContact(Contact<CONTACT_FORM_SIZE> const &contact) {
     }
 }
 
-const Contact<CONTACT_FORM_SIZE> *PhoneBook::getContact(int index) const {
+const ContactType *PhoneBook::getContact(int index) const {
     if (index < 0 || index >= _contactSize) {
         return NULL;
     }
