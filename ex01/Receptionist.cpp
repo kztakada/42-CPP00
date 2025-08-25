@@ -96,7 +96,7 @@ static std::string makeContactPreview(
         const std::string *field =
             contact->getField(static_cast<ContactField>(i));
         if (field != NULL) {
-            ssContact << *field << " ";
+            ssContact << "|" << std::setw(COL_WIDTH) << *field;
         }
     }
     return ssContact.str();
@@ -108,7 +108,8 @@ std::string Receptionist::_makeContactList() {
         if (_phoneBook->getContact(i) == NULL)
             break;
         const Contact *contact = _phoneBook->getContact(i);
-        ssList << i << ": " << makeContactPreview(contact, 3) << "\n";
+        ssList << std::setw(COL_WIDTH) << i << makeContactPreview(contact, 3)
+               << "\n";
     }
     return ssList.str();
 }

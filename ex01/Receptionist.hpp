@@ -1,11 +1,14 @@
 #ifndef RECEPTIONIST_HPP
 #define RECEPTIONIST_HPP
 
+#include <iomanip>
 #include <iostream>
 #include <sstream>
 
 #include "Display.hpp"
 #include "PhoneBook.hpp"
+
+const int COL_WIDTH = 10;
 
 class Receptionist {
    public:
