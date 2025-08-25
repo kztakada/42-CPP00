@@ -1,31 +1,31 @@
 #ifndef RECEPTIONIST_HPP
 #define RECEPTIONIST_HPP
 
+#include <climits>
 #include <iomanip>
 #include <iostream>
 #include <sstream>
 
+#include "Contact.hpp"
 #include "Display.hpp"
 #include "PhoneBook.hpp"
-
-const int COL_WIDTH = 10;
+#include "Settings.hpp"
 
 class Receptionist {
    public:
     Receptionist(PhoneBook *phoneBook);
-    Receptionist(PhoneBook *phoneBook, bool isStrictMode);
+    Receptionist(PhoneBook *phoneBook, bool isStrictMode, bool isEchoMode);
 
     void serve();
 
    private:
     PhoneBook *_phoneBook;
+    bool _isEchoMode;
     bool _isStrictMode;
-    void _listenToUserInput(std::string &input);
     void _handleAddContact();
     void _handleSearchContact();
     void _handleNoCommand();
     std::string _makeContactList();
-    std::string _makeContactDetails(const Contact *contact);
 };
 
 #endif /* RECEPTIONIST_HPP */

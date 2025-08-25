@@ -2,18 +2,17 @@
 #define PHONEBOOK_HPP
 
 #include "Contact.hpp"
-
-const int MAX_CONTACTS = 8;
+#include "Settings.hpp"
 
 class PhoneBook {
    public:
     PhoneBook();
 
-    void addContact(Contact const &contact);
-    const Contact *getContact(int index) const;
+    void addContact(Contact<CONTACT_FORM_SIZE> const &contact);
+    const Contact<CONTACT_FORM_SIZE> *getContact(int index) const;
 
    private:
-    Contact _contacts[MAX_CONTACTS];
+    Contact<CONTACT_FORM_SIZE> _contacts[MAX_CONTACTS];
     int _contactSize;
 };
 

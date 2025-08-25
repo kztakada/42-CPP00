@@ -2,9 +2,7 @@
 #define DISPLAY_HPP
 
 #include <iostream>
-
-const char *const CONTACT_PROMPTS[] = {"First Name: ", "Last Name: ",
-    "Nickname: ", "Phone Number: ", "Darkest Secret: "};
+#include <string>
 
 const std::string ExplanationHeader = "Welcome to the PhoneBook application.";
 const std::string CommandMessage = "Enter the command ADD, SEARCH, or EXIT.\n";

@@ -9,11 +9,21 @@
 int main(int argc, char* argv[]) {
     PhoneBook phoneBook;
     Receptionist receptionist(&phoneBook);
-
-    if (argc == 2 && std::string(argv[1]) == "--strict") {
-        Receptionist receptionist(&phoneBook, true);
+    std::cout << argc << std::endl;
+    if (argc > 1) {
+        bool isEchoMode = false;
+        bool hasStrictFlag = false;
+        for (int i = 1; i < argc; ++i) {
+            std::string arg_i(argv[i]);
+            if (arg_i == "--echo") {
+                isEchoMode = true;
+            }
+            if (arg_i == "--strict") {
+                hasStrictFlag = true;
+            }
+        }
+        receptionist = Receptionist(&phoneBook, isEchoMode, hasStrictFlag);
     }
-
     try {
         receptionist.serve();
     } catch (const std::ios_base::failure& e) {
