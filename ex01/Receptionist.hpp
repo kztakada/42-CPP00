@@ -51,7 +51,6 @@ class Receptionist {
     bool _isStrictMode;
     void _handleAddContact();
     void _handleSearchContact();
-    void _handleNoCommand();
     std::string _makeContactList();
 };
 

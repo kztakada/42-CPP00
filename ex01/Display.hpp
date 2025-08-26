@@ -16,7 +16,6 @@ class Display {
     static const char* const COMMAND_MESSAGE;
     static const char* const CURSOR;
     static const char* const LIST_SELECT_MESSAGE;
-    static const char* const NO_COMMAND_MESSAGE;
     static const char* const INVALID_INDEX_MESSAGE;
     static const char* const NO_CONTACTS_MESSAGE;
     static const char* const RUNTIME_ERROR_MESSAGE;

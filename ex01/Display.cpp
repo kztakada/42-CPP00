@@ -8,15 +8,11 @@ const char* const Display::COMMAND_MESSAGE =
 const char* const Display::CURSOR = "> ";
 const char* const Display::LIST_SELECT_MESSAGE =
     "Enter the index of the contact to view details:\n";
-const char* const Display::NO_COMMAND_MESSAGE =
-    "No command entered. Please try again.\n";
 const char* const Display::INVALID_INDEX_MESSAGE =
-    "Invalid index. Please try again.\n";
+    "Invalid index entered. Sorry.\n";
 const char* const Display::NO_CONTACTS_MESSAGE = "No contacts available.\n";
 const char* const Display::RUNTIME_ERROR_MESSAGE =
     "An error occurred while running the PhoneBook application.\n";
-
-Display::Display() {}
 
 void Display::show(const std::string& message) {
     std::cout << message << std::endl;

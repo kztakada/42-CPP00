@@ -27,11 +27,12 @@ void Receptionist::serve() {
     while (true) {
         std::string command;
         Display::prompt(Display::getCommandCursor());
+    RESTART_POINT:
         listenToUserInput(command);
         if (_isEchoMode)
             Display::show(command);
         if (command.empty())
-            continue;
+            goto RESTART_POINT;
 
         if (command == "ADD")
             _handleAddContact();
@@ -40,7 +41,7 @@ void Receptionist::serve() {
         else if (command == "EXIT")
             return;
         else
-            _handleNoCommand();
+            goto RESTART_POINT;
     }
 }
 
@@ -72,7 +73,7 @@ void Receptionist::_handleAddContact() {
             answer.clear();
         }
     }
-
+    Display::show("");
     _phoneBook->addContact(contact);
 }
 
@@ -104,10 +105,6 @@ void Receptionist::_handleSearchContact() {
     } else {
         Display::show(Display::INVALID_INDEX_MESSAGE);
     }
-}
-
-void Receptionist::_handleNoCommand() {
-    Display::show(Display::NO_COMMAND_MESSAGE);
 }
 
 std::string Receptionist::_makeContactList() {
