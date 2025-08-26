@@ -3,6 +3,16 @@
 
 #include <string>
 
+const int CONTACT_FORM_SIZE = 5;
+
+// Forward declaration and type alias
+template <int N>
+class Contact;
+typedef Contact<CONTACT_FORM_SIZE> ContactType;
+
+//-----------------------------------------------------------------
+// Contact Class Template Definition
+
 template <int N>
 class Contact {
    public:
@@ -11,13 +21,13 @@ class Contact {
     Contact<N> &operator=(const Contact<N> &other);
     ~Contact();
 
-    const std::string *getField(int field_index) const;
-    bool setField(int field_index, const std::string &value);
+    const std::string *getField(const int field_index) const;
+    bool setField(const int field_index, const std::string &value);
 
    private:
     std::string _field[N];
     const int _fieldSize;
-    bool _isValidField(int field_index) const;
+    bool _isValidField(const int field_index) const;
 };
 
 //-----------------------------------------------------------------
@@ -51,7 +61,7 @@ template <int N>
 Contact<N>::~Contact() {}
 
 template <int N>
-const std::string *Contact<N>::getField(int field_index) const {
+const std::string *Contact<N>::getField(const int field_index) const {
     if (_isValidField(field_index)) {
         return &_field[field_index];
     }
@@ -59,7 +69,7 @@ const std::string *Contact<N>::getField(int field_index) const {
 }
 
 template <int N>
-bool Contact<N>::setField(int field_index, const std::string &value) {
+bool Contact<N>::setField(const int field_index, const std::string &value) {
     if (!_isValidField(field_index)) {
         return false;
     }
@@ -71,7 +81,7 @@ bool Contact<N>::setField(int field_index, const std::string &value) {
 // class private methods
 
 template <int N>
-bool Contact<N>::_isValidField(int field_index) const {
+bool Contact<N>::_isValidField(const int field_index) const {
     return field_index >= 0 && field_index < _fieldSize;
 }
 

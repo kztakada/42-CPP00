@@ -16,8 +16,8 @@ static std::string makeContactDetails(const ContactType *contact);
 //-----------------------------------------------------------------
 // class public methods
 
-Receptionist::Receptionist(
-    PhoneBook *phoneBook, bool isEchoMode = false, bool isStrictMode = false)
+Receptionist::Receptionist(PhoneBookType *phoneBook, bool isEchoMode = false,
+    bool isStrictMode = false)
     : _phoneBook(phoneBook),
       _isEchoMode(isEchoMode),
       _isStrictMode(isStrictMode) {}

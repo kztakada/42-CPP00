@@ -7,7 +7,7 @@
 #include "Receptionist.hpp"
 
 int main(int argc, char* argv[]) {
-    PhoneBook phoneBook;
+    PhoneBookType phoneBook;
 
     bool isEchoMode = false;
     bool isStrictMode = false;
