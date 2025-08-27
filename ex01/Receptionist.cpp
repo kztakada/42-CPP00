@@ -24,10 +24,11 @@ Receptionist::Receptionist(PhoneBookType *phoneBook, bool isEchoMode = false,
 
 void Receptionist::serve() {
     Display::show(Display::EXPLANATION_HEADER);
+    std::string command;
     while (true) {
-        std::string command;
         Display::prompt(Display::getCommandCursor());
     RESTART_POINT:
+        command.clear();
         listenToUserInput(command);
         if (_isEchoMode)
             Display::show(command);
@@ -49,7 +50,7 @@ void Receptionist::serve() {
 // class private methods
 
 void Receptionist::_handleAddContact() {
-    std::string answer = "";
+    std::string answer;
     ContactType contact;
 
     for (int i = 0; i < CONTACT_FORM_SIZE; ++i) {
@@ -86,14 +87,16 @@ void Receptionist::_handleSearchContact() {
     Display::show(contactList);
 
     Display::prompt(Display::getListSelectCursor());
-    std::string select_index = "";
+    std::string select_index;
     listenToUserInput(select_index);
     if (_isEchoMode)
         Display::show(select_index);
 
     std::stringstream ss(select_index);
     int index;
-    if (!(ss >> index)) {
+    std::string remaining;
+
+    if (!(ss >> index) || (ss >> remaining)) {
         Display::show(Display::INVALID_INDEX_MESSAGE);
         return;
     }
@@ -221,10 +224,12 @@ static std::string makeContactDetails(const ContactType *contact) {
     std::stringstream ss;
     for (int i = 0; i < CONTACT_FORM_SIZE; ++i) {
         const std::string *field = contact->getField(i);
+        std::string title = CONTACT_FIELD_INFO[i].name;
+        title += ": ";
         if (field != NULL) {
-            std::string title = CONTACT_FIELD_INFO[i].name;
-            title += ": ";
             ss << std::setw(TITLE_WIDTH) << title << *field << "\n";
+        } else {
+            ss << std::setw(TITLE_WIDTH) << title << "\n";
         }
     }
     return ss.str();
